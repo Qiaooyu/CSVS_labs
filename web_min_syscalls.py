@@ -5,7 +5,7 @@ import urllib.request
 import json
 import subprocess
 import time
-
+import logging
 
 def func_test():
     try:
@@ -80,8 +80,9 @@ if __name__ == '__main__':
             run_result = subprocess.run(kill_command, shell=True)
             print(run_result.returncode)
         except:
+            print("###","run failed")
             subprocess.run(kill_command, shell=True)
-            print("test failed and docker killed")
+            print(" docker killed")
             with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/list-of-min-syscalls',
                       'a') as f:
                 f.write(f"{s}\n")

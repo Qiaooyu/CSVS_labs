@@ -23,13 +23,13 @@ docker run -d \
 --add-host db.cyber23.test:203.0.113.201 \
 -p 80:80 \
 --security-opt label:type:webserver_t \
---security-opt seccomp=min-web.json \
+--security-opt seccomp=min-web3.json \
 --cap-drop=ALL \
 --cap-add=CAP_CHOWN \
 --cap-add=CAP_NET_BIND_SERVICE \
 --cap-add=CAP_SETGID \
 --cap-add=CAP_SETUID \
---name web \
+--name web_all \
 u2239149/csvs2023-web_i:0.1
 
 docker run -d \

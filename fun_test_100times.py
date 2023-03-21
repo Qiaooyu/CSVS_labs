@@ -1,7 +1,7 @@
-from all_code_new import func_test
+from find_cap import func_test
 
-i=0
-while i <200:
+i = 0
+while i < 200:
     try:
         func_test()
         i += 1

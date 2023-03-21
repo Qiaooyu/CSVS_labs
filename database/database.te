@@ -1,0 +1,49 @@
+#   sudo make -f /usr/share/selinux/devel/Makefile database.pp
+#   sudo semodule -i database.pp
+#   sudo semodule -l | grep database
+#   sudo cat /var/log/audit/audit.log | grep avc
+#   sudo ausearch -m avc --start recent | audit2allow -r
+
+
+### finish but need to better
+# v1.2 reduce capabilities
+# v1.3 reduce udp_socket
+
+policy_module(database,2.0)
+
+virt_sandbox_domain_template(database);
+
+require {
+	type database_t;
+	type node_t;
+	type mysqld_port_t;
+
+	
+	class netlink_route_socket { read write bind };
+	class tcp_socket { accept read write allowed getattr access bind create listen name_bind node_bind setopt };
+	class dir read;
+	class lnk_file read;
+	class file { open read };
+}
+
+
+
+#============= database_t ==============
+allow database_t self:tcp_socket { accept read write listen  allowed getattr access bind create setopt};
+allow database_t self:netlink_route_socket { read write bind };
+allow database_t mysqld_port_t:tcp_socket name_bind;
+allow database_t node_t:tcp_socket node_bind;
+
+#allow database_t sysfs_t:dir read;
+#allow database_t sysfs_t:file { open read };
+#allow database_t sysfs_t:lnk_file read;
+
+
+
+#allow database_t self:tcp_socket { accept read write allowed getattr access bind create listen setopt };
+# self:netlink_route_socket create getattr nlmsg_read
+# permissive database_t;
+# class capability {  setgid setuid };
+# allow database_t self:capability { setgid setuid };
+# class udp_socket { create ioctl connect getattr};
+# allow database_t self:udp_socket { create ioctl connect getattr };

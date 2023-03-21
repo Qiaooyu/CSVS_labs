@@ -1,7 +1,7 @@
 import subprocess
 import time
 
-from all_code_new import timeout
+from find_cap import timeout
 
 
 

@@ -5,9 +5,11 @@ import urllib.request
 import json
 import subprocess
 import time
-import logging
+import docker
 
-def func_test():
+
+
+def func_test(fun):
     try:
         # Generate random input data
         fullname = ''.join(random.choices(string.ascii_letters, k=10))
@@ -22,6 +24,10 @@ def func_test():
         response = urllib.request.urlopen(request, timeout=10)
         print(response.getcode())
         # Check if insert was successful
+        if response.getcode() == 403:
+            with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/403.txt', 'a') as b:
+                b.write(f"{fun}\n")
+            raise Exception("access denied")
         if response.getcode() == 200:
             # Call index.php to search for new record
             data = urllib.parse.urlencode({'search_fullname': fullname, 'search_suggestion': suggestion}).encode(
@@ -35,18 +41,19 @@ def func_test():
         else:
             raise Exception("fail-2")
     except:
+
         raise Exception("fail-3")
 
 
 if __name__ == '__main__':
-    with open('/home/csc//Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/moby-syscalls') as f:
+    with open('/home/csc//Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/moby-syscalls') as f:
         syscalls = [l.strip() for l in f.readlines()]
     for s in syscalls:
-        with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/moby-default.json') as f:
+        with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/moby-default.json') as f:
             json_data = json.load(f)
         print(f"{s} being removed from moby-default.json")
         json_data['syscalls'][0]['names'].remove(s)
-        tmp_file = '/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/tmp.json'
+        tmp_file = '/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/tmp.json'
         with open(tmp_file, 'w') as f:
             json.dump(json_data, f)
 
@@ -64,55 +71,23 @@ if __name__ == '__main__':
             --cap-add=CAP_SETUID \
             --security-opt seccomp={tmp_file} \
             --name webtest \
-            u2239149/csvs2023-web_i:0.1"
+            web-strip-test:2.0"
 
         kill_command = "docker kill webtest"
-
-
 
         try:
             run_result = subprocess.run(run_command, shell=True, check=True)
             print(run_result.returncode)
             time.sleep(2)
             print("sleep 2s")
-            func_test_result = func_test()
+            func_test_result = func_test(s)
             print(func_test_result)
             run_result = subprocess.run(kill_command, shell=True)
             print(run_result.returncode)
         except:
-            print("###","run failed")
+            print("###", "run failed")
             subprocess.run(kill_command, shell=True)
             print(" docker killed")
-            with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/list-of-min-syscalls',
+            with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/list-of-min-syscalls',
                       'a') as f:
                 f.write(f"{s}\n")
-
-        # try:
-        #     run_result = subprocess.run(run_command, shell=True, check=True)
-        #     print(run_result.returncode)
-        # except subprocess.SubprocessError as e:
-        #     print(e)
-        #     with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/list-of-min-syscalls',
-        #               'a') as f:
-        #         f.write(f"{s}\n")
-        # else:
-        #     print("docker run failed and ")
-        #
-        # time.sleep(2)
-        # print("sleep 2s")
-        #
-        # try:
-        #     func_test_result = func_test()
-        #     print(func_test_result)
-        # except Exception as e:
-        #     if e == "fail-3" or "fail-2" or "fail-1":
-        #         print("function test failed and errcode = ", e)
-        #         with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/list-of-min-syscalls',
-        #                   'a') as f:
-        #             f.write(f"{s}\n")
-        #         subprocess.run(kill_command, shell=True)
-        #
-        # try:
-        #     run_result = subprocess.run(kill_command, shell=True)
-        #     print(run_result.returncode)
-        # except

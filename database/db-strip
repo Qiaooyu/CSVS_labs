@@ -1,0 +1,47 @@
+#!/bin/bash
+
+./strip-image.sh  \
+  -v \
+  -i db-final-changefile \
+  -t db-strip-test:0.2 \
+  -p mariadb \
+  -f /bin/bash \
+  -f /bin/ls \
+  -f /bin/cat \
+  -f /bin/cd \
+  -f /usr/bin/bash \
+  -f /usr/bin/cat \
+  -f /usr/bin/id \
+  -f /usr/bin/mkdir \
+  -f /usr/bin/mysql  \
+  -f /usr/bin/sed \
+  -f /usr/bin/dash \
+  -f /usr/bin/date \
+  -f /usr/bin/dirname \
+  -f /usr/bin/gawk \
+  -f /usr/bin/mysql \
+  -f /usr/bin/mariadb \
+  -f /usr/bin/mysql_install_db \
+  -f /usr/bin/mariadb-install-db \
+  -f /usr/bin/sed \
+  -f /usr/bin/sh \
+  -f /usr/bin/slepp \
+  -f /usr/bin/uname \
+  -f /mysql/mysql.conf.d/mysqld.cnf \
+  -f /etc/mysql \
+  -f /etc/passwd \
+  -f /etc/nsswitch.conf \
+  -f /etc/host.conf \
+  -f /etc/resolv.conf \
+  -f /usr/lib/locale \
+  -f /usr/lib/x86_64-linux-gnu \
+  -f /usr/local/bin/docker-entrypoint.sh \
+  -f /usr/sbin/mariadbd \
+  -f /usr/sbin/mysqld \
+  -f /usr/share/mysql \
+  -f /usr/lib64/ld-linux-x86-64.so.2 \
+  -f /run/mysqld \
+  -f /var/lib/mysql \
+  -f /tmp \
+  -d Dockerfile
+

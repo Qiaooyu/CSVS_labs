@@ -7,4 +7,4 @@ while i < 200:
         i += 1
     except Exception as e:
         print(e)
-        break
+        continue

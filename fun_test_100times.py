@@ -1,7 +1,7 @@
 from find_cap import func_test
 
 i = 0
-while i < 200:
+while i < 100:
     try:
         func_test()
         i += 1

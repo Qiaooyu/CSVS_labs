@@ -11,7 +11,7 @@ docker run -d \
 --cap-drop=ALL \
 -v mydata:/var/lib/mysql:Z \
 --name db_all \
-db_change_file:0.2
+db-final-changefile
 
 
 docker run -d \
@@ -20,9 +20,9 @@ docker run -d \
 --hostname db.cyber23.test \
 -e MYSQL_ROOT_PASSWORD="CorrectHorseBatteryStaple" \
 -e MYSQL_DATABASE="csvs23db" \
--v mydata:/var/lib/mysql \
---name db_o \
-db_change_file:0.2
+-v mydata:/var/lib/mysql:Z \
+--name db_all_no \
+db-final-changefile
 
 
 
@@ -37,7 +37,7 @@ docker run -d \
 --add-host db.cyber23.test:203.0.113.201 \
 -p 80:80 \
 --security-opt label:type:webserver_t \
---security-opt seccomp=min-web3.json \
+--security-opt seccomp=min-web4.json \
 --cap-drop=ALL \
 --cap-add=CAP_CHOWN \
 --cap-add=CAP_NET_BIND_SERVICE \
@@ -126,4 +126,4 @@ docker run -d \
 --cap-drop=ALL \
 -v mydata:/var/lib/mysql:Z \
 --name db-all-strip \
-db-strip-test:0.2
+db-strip-test:0.98

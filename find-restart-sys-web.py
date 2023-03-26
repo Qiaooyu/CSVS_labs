@@ -44,7 +44,7 @@ def func_test(fun):
 
 
 client = docker.from_env()
-with open('/home/csc//Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/moby-syscalls') as f:
+with open('/home/csc//Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/useless-syscalls') as f:
     syscalls = [l.strip() for l in f.readlines()]
 for s in syscalls:
     with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/moby-default.json') as f:
@@ -57,7 +57,7 @@ for s in syscalls:
     with open(tmp_file, 'w') as f:
         json.dump(json_data, f)
 
-    run_command = f"docker run -d --rm \
+    run_command = f"docker run -d \
                 --net u2239149/csvs2023_n \
                 --ip 203.0.113.200 \
                 --hostname www.cyber23.test \
@@ -75,43 +75,40 @@ for s in syscalls:
 
     kill_command = "docker kill webtest"
 
+    rm_command = "docker rm webtest"
+
     try:
         run_result = subprocess.run(run_command, shell=True, check=True)
         print("run_code is ", run_result.returncode)
-
-        time.sleep(2)
-        print("sleep 2s")
+        time.sleep(0.5)
 
         a = client.containers.get('webtest')
-        print("container id:", a.id)
 
-        # if "chown: changing ownership of \'/usr/share/nginx/html/action.php\': Operation not permitted\n" in a.logs().decode(
-        #         'utf-8'):
-        #     print("find syscalls make chown fail", s)
-        #     with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/403.txt', 'a') as b:
-        #         b.write(f"{s}\n")
-        #     a.kill()
-        #     continue
+        a.stop()
+        a.start()
 
-        if 'pwrite() "/run/nginx.pid" failed' in a.logs().decode('utf-8'):
-            print("find syscalls make chown fail", s)
-            with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/pwrite.txt', 'a') as b:
-                b.write(f"{s}\n")
-            a.kill()
-            continue
+        if "FPM initialization failed" in a.logs().decode('utf-8'):
+            print("Find it:",s)
+            with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/restart',
+                      'a') as f:
+                f.write(f"{s}\n")
 
-        func_test_result = func_test(s)
-        print(func_test_result)
+        a1 = client.containers.get("webtest").status
+        if a1 == "exited":
+            print("The status is exited", s)
+            with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/restart2',
+                      'a') as f:
+                f.write(f"{s}\n")
 
         a.kill()
-        with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/useless-syscalls',
-                  'a') as f:
-            f.write(f"{s}\n")
+        a.remove()
 
     except:
         print("## run failed ##")
         subprocess.run(kill_command, shell=True)
         print(" docker killed")
-        with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/list-of-min-syscalls',
+        subprocess.run(rm_command, shell=True)
+        print(" docker removed")
+        with open('/home/csc/Desktop/PMA-start/2023-02-06.csvs.rc1/web_test_case/access/restart',
                   'a') as f:
             f.write(f"{s}\n")

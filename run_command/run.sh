@@ -21,7 +21,7 @@ docker run -d \
 --add-host db.cyber23.test:203.0.113.201 \
 -p 80:80 \
 --security-opt label:type:webserver_t \
---security-opt seccomp=min-web4.json \
+--security-opt seccomp=min-web5.json \
 --cap-drop=ALL \
 --cap-add=CAP_CHOWN \
 --cap-add=CAP_NET_BIND_SERVICE \
